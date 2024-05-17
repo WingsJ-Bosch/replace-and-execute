@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "replace-and-execute", "replace-and-execute.csproj", "{F305A695-00D9-4907-A923-96CB73D8624A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F305A695-00D9-4907-A923-96CB73D8624A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F305A695-00D9-4907-A923-96CB73D8624A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F305A695-00D9-4907-A923-96CB73D8624A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F305A695-00D9-4907-A923-96CB73D8624A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F1386AF4-A400-4EA8-8D93-C2019F82F4FE}
+	EndGlobalSection
+EndGlobal
