@@ -7,7 +7,7 @@ namespace replace_and_execute.Types
     {
         public String Name { get; set; } = "";
         public String Path { get; set; } = "";
-        public String Pre { get; set; } = "";
-        public String Post { get; set; } = "";
+        public String[] Pre { get; set; } = [];
+        public String[] Post { get; set; } = [];
     }
 }
