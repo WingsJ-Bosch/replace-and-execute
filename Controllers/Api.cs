@@ -20,27 +20,33 @@ namespace replace_and_execute.Controllers
         {
             List<String> outputs = [];
 
-            outputs.Add("Commands Execution Start");
+            outputs.Add("[Commands Execution Start]");
             var process = Process.Start(new ProcessStartInfo(commands[0], commands[1] ?? "") { RedirectStandardOutput = true, WorkingDirectory = cwd });
-            if (process == null)
+            if(process == null)
             {
-                Console.WriteLine("Commands Execution Failed");
+                outputs.Add("[Commands Execution Failed]");
             }
             else
             {
-                using (var reader = process.StandardOutput)
+                using(var reader = process.StandardOutput)
                 {
-                    while (!reader.EndOfStream)
+                    while(!reader.EndOfStream)
                     {
-                        Console.WriteLine(reader.ReadLine());
+                        var s = reader.ReadLine();
+                        if(s != null)
+                        {
+                            outputs.Add(s);
+                        }
                     }
-                    if (!process.HasExited)
+                    if(!process.HasExited)
                     {
                         process.Kill();
                     }
                 }
-                Console.WriteLine($"Commands Execution Failed with Code: {process.ExitCode}");
+                outputs.Add($"[Commands Execution Failed with Code: {process.ExitCode}]");
             }
+
+            return outputs;
         }
 
         /// <summary>
@@ -50,18 +56,21 @@ namespace replace_and_execute.Controllers
         /// <param name="file">File</param>
         /// <returns>Action Result</returns>
         [HttpPost("Update")]
-        public async Task<ActionResult> PostUpdate([FromForm] string name, [FromForm] IFormFile file)
+        public async Task<ActionResult<List<String>>> PostUpdate([FromForm] string name, [FromForm] IFormFile file)
         {
             var module = configuration.GetSection("modules").Get<List<Module>>()?.Find((a) => a.Name == name);
-            if (module != null)
+            if(module != null)
             {
-                if (module.Pre.Length > 0)
+                List<String> outputs = [];
+
+                if(module.Pre.Length > 0)
                 {
-                    ExecuteCommand(module.Pre, module.Path);
+                    outputs.Add("[Pre Command Found]");
+                    outputs.AddRange(ExecuteCommand(module.Pre, module.Path));
                 }
 
                 var tempFilePath = Path.Combine(Path.GetTempPath(), file.FileName);
-                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                using(var stream = new FileStream(tempFilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 };
@@ -69,10 +78,10 @@ namespace replace_and_execute.Controllers
                 try
                 {
                     using var archive = ZipFile.OpenRead(tempFilePath);
-                    foreach (var entry in archive.Entries)
+                    foreach(var entry in archive.Entries)
                     {
                         var entryDestinationPath = Path.Combine(module.Path, entry.FullName);
-                        if (entry.FullName.EndsWith('/'))
+                        if(entry.FullName.EndsWith('/'))
                         {
                             Directory.CreateDirectory(entryDestinationPath);
                         }
@@ -87,18 +96,19 @@ namespace replace_and_execute.Controllers
                 }
                 finally
                 {
-                    if (System.IO.File.Exists(tempFilePath))
+                    if(System.IO.File.Exists(tempFilePath))
                     {
                         System.IO.File.Delete(tempFilePath);
                     }
                 }
 
-                if (module.Post.Length > 0)
+                if(module.Post.Length > 0)
                 {
-                    ExecuteCommand(module.Post, module.Path);
+                    outputs.Add("[Post Command Found]");
+                    outputs.AddRange(ExecuteCommand(module.Post, module.Path));
                 }
 
-                return Ok();
+                return Ok(outputs);
             }
             else
             {

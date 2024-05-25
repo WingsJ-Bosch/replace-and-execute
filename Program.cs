@@ -1,5 +1,11 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using replace_and_execute;
+
+
+var configurationBuilder = new ConfigurationBuilder();
+configurationBuilder.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+var configuration = (configurationBuilder).Build();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -11,6 +17,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.WebHost.ConfigureKestrel(options =>
 {
+    options.ListenAnyIP(configuration.GetValue<int>("port", 3000));
     options.Limits.MaxRequestBodySize = 100 * 1024 * 1024; // 100MB
 });
 
