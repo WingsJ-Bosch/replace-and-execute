@@ -12,7 +12,7 @@ namespace replace_and_execute.Controllers
     [Route("[controller]")]
     public class Api : ControllerBase
     {
-        IConfiguration configuration;
+        readonly IConfiguration configuration;
 
         /// <summary>
         /// Constructor
@@ -28,9 +28,10 @@ namespace replace_and_execute.Controllers
         /// <param name="commands">Commands</param>
         private static List<String> ExecuteCommand(String[] commands, String cwd)
         {
-            List<String> outputs = new List<String>();
-
-            outputs.Add("[Commands Execution Start]");
+            List<String> outputs = new()
+            {
+                "[Commands Execution Start]"
+            };
             var process = Process.Start(new ProcessStartInfo(commands[0], commands[1] ?? "") { RedirectStandardOutput = true, WorkingDirectory = cwd });
             if(process == null)
             {
@@ -71,7 +72,7 @@ namespace replace_and_execute.Controllers
             var module = configuration.GetSection("modules").Get<List<Module>>()?.Find((a) => a.Name == name);
             if(module != null)
             {
-                List<String> outputs = new List<String>();
+                List<String> outputs = new();
 
                 if(module.Pre.Length > 0)
                 {
